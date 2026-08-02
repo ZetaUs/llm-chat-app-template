@@ -13,7 +13,7 @@ let chatHistory = [
 	{
 		role: "assistant",
 		content:
-			"你好，我叫ZetaByte，是你的专属AI助手。请问有什么可以帮您？",
+			"你好！我是由Cloudflare Workers AI驱动的LLM聊天应用。请问有什么可以帮您？",
 	},
 ];
 let isProcessing = false;

@@ -3,29 +3,25 @@
  *
  * Handles the chat UI interactions and communication with the backend API.
  */
-
 // DOM elements
 const chatMessages = document.getElementById("chat-messages");
 const userInput = document.getElementById("user-input");
 const sendButton = document.getElementById("send-button");
 const typingIndicator = document.getElementById("typing-indicator");
-
 // Chat state
 let chatHistory = [
 	{
 		role: "assistant",
 		content:
-			"你好！我是一个由Cloudflare Workers AI驱动的LLM聊天应用。怎么可能我今天帮你？",
+			"你好！我是由Cloudflare Workers AI驱动的LLM聊天应用。请问有什么可以帮您？",
 	},
 ];
 let isProcessing = false;
-
 // Auto-resize textarea as user types
 userInput.addEventListener("input", function () {
 	this.style.height = "auto";
 	this.style.height = this.scrollHeight + "px";
 });
-
 // Send message on Enter (without Shift)
 userInput.addEventListener("keydown", function (e) {
 	if (e.key === "Enter" && !e.shiftKey) {
@@ -33,48 +29,41 @@ userInput.addEventListener("keydown", function (e) {
 		sendMessage();
 	}
 });
-
 // Send button click handler
 sendButton.addEventListener("click", sendMessage);
-
 /**
  * Sends a message to the chat API and processes the response
  */
 async function sendMessage() {
 	const message = userInput.value.trim();
-
 	// Don't send empty messages
 	if (message === "" || isProcessing) return;
-
 	// Disable input while processing
 	isProcessing = true;
 	userInput.disabled = true;
 	sendButton.disabled = true;
-
 	// Add user message to chat
 	addMessageToChat("user", message);
-
 	// Clear input
 	userInput.value = "";
 	userInput.style.height = "auto";
-
 	// Show typing indicator
 	typingIndicator.classList.add("visible");
-
 	// Add message to history
 	chatHistory.push({ role: "user", content: message });
-
 	try {
-		// Create new assistant response element
+		// 创建外层容器 + 内层气泡（修复自适应宽度关键）
+		const wrapEl = document.createElement("div");
+		wrapEl.className = "msg-wrap assistant";
 		const assistantMessageEl = document.createElement("div");
 		assistantMessageEl.className = "message assistant-message";
 		assistantMessageEl.innerHTML = "<p></p>";
-		chatMessages.appendChild(assistantMessageEl);
-		const assistantTextEl = assistantMessageEl.querySelector("p");
+		wrapEl.appendChild(assistantMessageEl);
+		chatMessages.appendChild(wrapEl);
 
+		const assistantTextEl = assistantMessageEl.querySelector("p");
 		// Scroll to bottom
 		chatMessages.scrollTop = chatMessages.scrollHeight;
-
 		// Send request to API
 		const response = await fetch("/api/chat", {
 			method: "POST",
@@ -85,7 +74,6 @@ async function sendMessage() {
 				messages: chatHistory,
 			}),
 		});
-
 		// Handle errors
 		if (!response.ok) {
 			throw new Error("Failed to get response");
@@ -93,7 +81,6 @@ async function sendMessage() {
 		if (!response.body) {
 			throw new Error("Response body is null");
 		}
-
 		// Process streaming response
 		const reader = response.body.getReader();
 		const decoder = new TextDecoder();
@@ -103,11 +90,9 @@ async function sendMessage() {
 			assistantTextEl.textContent = responseText;
 			chatMessages.scrollTop = chatMessages.scrollHeight;
 		};
-
 		let sawDone = false;
 		while (true) {
 			const { done, value } = await reader.read();
-
 			if (done) {
 				// Process any remaining complete events in buffer
 				const parsed = consumeSseEvents(buffer + "\n\n");
@@ -137,7 +122,6 @@ async function sendMessage() {
 				}
 				break;
 			}
-
 			// Decode chunk
 			buffer += decoder.decode(value, { stream: true });
 			const parsed = consumeSseEvents(buffer);
@@ -172,7 +156,6 @@ async function sendMessage() {
 				break;
 			}
 		}
-
 		// Add completed response to chat history
 		if (responseText.length > 0) {
 			chatHistory.push({ role: "assistant", content: responseText });
@@ -186,7 +169,6 @@ async function sendMessage() {
 	} finally {
 		// Hide typing indicator
 		typingIndicator.classList.remove("visible");
-
 		// Re-enable input
 		isProcessing = false;
 		userInput.disabled = false;
@@ -194,20 +176,22 @@ async function sendMessage() {
 		userInput.focus();
 	}
 }
-
 /**
  * Helper function to add message to chat
  */
 function addMessageToChat(role, content) {
+	// 外层对齐容器
+	const wrapEl = document.createElement("div");
+	wrapEl.className = `msg-wrap ${role}`;
+	// 内层气泡
 	const messageEl = document.createElement("div");
 	messageEl.className = `message ${role}-message`;
 	messageEl.innerHTML = `<p>${content}</p>`;
-	chatMessages.appendChild(messageEl);
-
+	wrapEl.appendChild(messageEl);
+	chatMessages.appendChild(wrapEl);
 	// Scroll to bottom
 	chatMessages.scrollTop = chatMessages.scrollHeight;
 }
-
 function consumeSseEvents(buffer) {
 	let normalized = buffer.replace(/\r/g, "");
 	const events = [];
@@ -215,7 +199,6 @@ function consumeSseEvents(buffer) {
 	while ((eventEndIndex = normalized.indexOf("\n\n")) !== -1) {
 		const rawEvent = normalized.slice(0, eventEndIndex);
 		normalized = normalized.slice(eventEndIndex + 2);
-
 		const lines = rawEvent.split("\n");
 		const dataLines = [];
 		for (const line of lines) {

@@ -9,57 +9,89 @@
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-    <div class="chat-container">
-        <header class="chat-header">
-            <div class="header-left">
-                <div class="logo">
-                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                        <rect width="28" height="28" rx="8" fill="url(#grad)"/>
-                        <path d="M8 11L14 8L20 11V18L14 21L8 18V11Z" stroke="white" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
-                        <circle cx="14" cy="14" r="2.5" fill="white"/>
-                        <defs>
-                            <linearGradient id="grad" x1="0" y1="0" x2="28" y2="28">
-                                <stop offset="0" stop-color="#667eea"/>
-                                <stop offset="1" stop-color="#764ba2"/>
-                            </linearGradient>
-                        </defs>
+    <div class="app-layout">
+        <!-- 侧边栏 -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <button class="new-chat-btn" id="new-chat-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
                     </svg>
-                </div>
-                <div class="title-group">
-                    <h1>AI Chat</h1>
-                    <span class="status-dot" id="status-dot"></span>
-                    <span class="status-text" id="status-text">就绪</span>
-                </div>
+                    <span>新对话</span>
+                </button>
             </div>
-            <button class="clear-btn" id="clear-btn" title="清空对话">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                    <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
-                </svg>
-            </button>
-        </header>
-
-        <main class="chat-messages" id="chat-messages"></main>
-
-        <div class="typing-indicator" id="typing-indicator">
-            <span></span><span></span><span></span>
-        </div>
-
-        <footer class="chat-input-area">
-            <div class="input-wrapper">
-                <textarea
-                    id="user-input"
-                    class="user-input"
-                    placeholder="输入消息... (Enter 发送, Shift+Enter 换行)"
-                    rows="1"
-                ></textarea>
-                <button id="send-button" class="send-button" title="发送">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="22" y1="2" x2="11" y2="13"/>
-                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            <div class="conversation-list" id="conversation-list"></div>
+            <div class="sidebar-footer">
+                <button class="toggle-sidebar-btn" id="toggle-sidebar-btn" title="收起侧栏">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                        <line x1="9" y1="3" x2="9" y2="21"/>
                     </svg>
                 </button>
             </div>
-        </footer>
+        </aside>
+
+        <!-- 主聊天区 -->
+        <div class="chat-container">
+            <header class="chat-header">
+                <div class="header-left">
+                    <button class="menu-btn" id="menu-btn" title="展开侧栏">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <line x1="3" y1="6" x2="21" y2="6"/>
+                            <line x1="3" y1="12" x2="21" y2="12"/>
+                            <line x1="3" y1="18" x2="21" y2="18"/>
+                        </svg>
+                    </button>
+                    <div class="logo">
+                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                            <rect width="28" height="28" rx="8" fill="url(#grad)"/>
+                            <path d="M8 11L14 8L20 11V18L14 21L8 18V11Z" stroke="white" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
+                            <circle cx="14" cy="14" r="2.5" fill="white"/>
+                            <defs>
+                                <linearGradient id="grad" x1="0" y1="0" x2="28" y2="28">
+                                    <stop offset="0" stop-color="#667eea"/>
+                                    <stop offset="1" stop-color="#764ba2"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div class="title-group">
+                        <h1 id="chat-title">AI Chat</h1>
+                        <span class="status-dot" id="status-dot"></span>
+                        <span class="status-text" id="status-text">就绪</span>
+                    </div>
+                </div>
+                <button class="clear-btn" id="clear-btn" title="清空当前对话">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+                    </svg>
+                </button>
+            </header>
+
+            <main class="chat-messages" id="chat-messages"></main>
+
+            <div class="typing-indicator" id="typing-indicator">
+                <span></span><span></span><span></span>
+            </div>
+
+            <footer class="chat-input-area">
+                <div class="input-wrapper">
+                    <textarea
+                        id="user-input"
+                        class="user-input"
+                        placeholder="输入消息... (Enter 发送, Shift+Enter 换行)"
+                        rows="1"
+                    ></textarea>
+                    <button id="send-button" class="send-button" title="发送">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"/>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                        </svg>
+                    </button>
+                </div>
+            </footer>
+        </div>
     </div>
     <script src="/chat.js"></script>
 </body>

@@ -191,6 +191,9 @@ dist
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,node,git
 
+### Releases (large binary files, hosted externally via GitHub Releases) ###
+releases/
+
 ### Wrangler ###
 .wrangler/
 .env*

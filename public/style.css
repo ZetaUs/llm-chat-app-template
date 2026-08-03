@@ -277,6 +277,30 @@ html, body {
     color: #ef4444;
 }
 
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.download-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary);
+    padding: 8px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.download-btn:hover {
+    background: #e0e7ff;
+    color: #667eea;
+}
+
 /* ===== 消息区 ===== */
 .chat-messages {
     flex: 1;

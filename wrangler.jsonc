@@ -1,13 +1,24 @@
 {
   "name": "chat",
-  "main": "src/worker.js",
+  "main": "src/index.ts",
   "compatibility_date": "2024-01-01",
+  "compatibility_flags": ["nodejs_compat"],
   "kv_namespaces": [
     {
       "binding": "CHAT_KV",
       "id": "3f48e77d245f41bfa2fbc1852bf7c98b"
     }
   ],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./public"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "ai": {
+    "binding": "AI"
+  },
   "vars": {
     "ROOM_ID": "default-room",
     "MAX_MESSAGES": "500",

@@ -45,9 +45,16 @@ export default {
 		}
 
 		// Handle app version / update info
-		if (url.pathname === "/api/vars") {
+		if (url.pathname === "/api/vars" || url.pathname === "/api/vars/app") {
 			if (request.method === "GET") {
-				return handleVarsRequest(env);
+				return handleVarsRequest(env, "app");
+			}
+			return new Response("Method not allowed", { status: 405 });
+		}
+
+		if (url.pathname === "/api/vars/win") {
+			if (request.method === "GET") {
+				return handleVarsRequest(env, "win");
 			}
 			return new Response("Method not allowed", { status: 405 });
 		}
@@ -111,10 +118,30 @@ async function handleChatRequest(
 
 /**
  * Handles app version / update info requests.
- * Returns the APP_* vars configured in wrangler.jsonc so the Android client
+ * Returns platform-specific vars configured in wrangler.jsonc so clients
  * can check for updates.
+ * - platform "app": Android (APP_*) vars
+ * - platform "win": Windows (WIN_*) vars
  */
-function handleVarsRequest(env: Env): Response {
+function handleVarsRequest(env: Env, platform: "app" | "win"): Response {
+	if (platform === "win") {
+		return new Response(
+			JSON.stringify({
+				WIN_VERSION_CODE: env.WIN_VERSION_CODE ?? "1",
+				WIN_VERSION_NAME: env.WIN_VERSION_NAME ?? "1.0",
+				WIN_DOWNLOAD_URL: env.WIN_DOWNLOAD_URL ?? "",
+				WIN_CHANGELOG: env.WIN_CHANGELOG ?? "",
+				WIN_FORCE_UPDATE: env.WIN_FORCE_UPDATE ?? "false",
+			}),
+			{
+				headers: {
+					"content-type": "application/json; charset=utf-8",
+					"cache-control": "no-cache",
+				},
+			},
+		);
+	}
+
 	return new Response(
 		JSON.stringify({
 			APP_VERSION_CODE: env.APP_VERSION_CODE ?? "1",
@@ -122,6 +149,7 @@ function handleVarsRequest(env: Env): Response {
 			APP_DOWNLOAD_URL: env.APP_DOWNLOAD_URL ?? "",
 			APP_CHANGELOG: env.APP_CHANGELOG ?? "",
 			APP_FORCE_UPDATE: env.APP_FORCE_UPDATE ?? "false",
+			APP_MIN_SDK: env.APP_MIN_SDK ?? "24",
 		}),
 		{
 			headers: {

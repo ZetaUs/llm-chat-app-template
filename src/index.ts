@@ -44,6 +44,14 @@ export default {
 			return new Response("Method not allowed", { status: 405 });
 		}
 
+		// Handle app version / update info
+		if (url.pathname === "/api/vars") {
+			if (request.method === "GET") {
+				return handleVarsRequest(env);
+			}
+			return new Response("Method not allowed", { status: 405 });
+		}
+
 		// Handle 404 for unmatched routes
 		return new Response("Not found", { status: 404 });
 	},
@@ -99,4 +107,27 @@ async function handleChatRequest(
 			},
 		);
 	}
+}
+
+/**
+ * Handles app version / update info requests.
+ * Returns the APP_* vars configured in wrangler.jsonc so the Android client
+ * can check for updates.
+ */
+function handleVarsRequest(env: Env): Response {
+	return new Response(
+		JSON.stringify({
+			APP_VERSION_CODE: env.APP_VERSION_CODE ?? "1",
+			APP_VERSION_NAME: env.APP_VERSION_NAME ?? "1.0",
+			APP_DOWNLOAD_URL: env.APP_DOWNLOAD_URL ?? "",
+			APP_CHANGELOG: env.APP_CHANGELOG ?? "",
+			APP_FORCE_UPDATE: env.APP_FORCE_UPDATE ?? "false",
+		}),
+		{
+			headers: {
+				"content-type": "application/json; charset=utf-8",
+				"cache-control": "no-cache",
+			},
+		},
+	);
 }

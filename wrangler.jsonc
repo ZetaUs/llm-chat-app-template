@@ -18,7 +18,14 @@
 	"ai": {
 		"binding": "AI"
 	},
-                "workers_dev": false,
-                "preview_urls": false,
+	"vars": {
+		"APP_VERSION_CODE": "1",
+		"APP_VERSION_NAME": "1.0",
+		"APP_DOWNLOAD_URL": "https://l.download.zztxer.dpdns.org/1.0-app-release.apk",
+		"APP_CHANGELOG": "1. 【新增】AI 流式对话，对接 Cloudflare Workers AI\n2. 【新增】侧边栏对话列表，支持新建/切换/删除\n3. 【新增】本地缓存对话记录，重启不丢失\n4. 【新增】停止生成、打字指示器\n5. 【新增】应用内自更新检测",
+		"APP_FORCE_UPDATE": "false"
+	},
+	"workers_dev": false,
+	"preview_urls": false,
 	"upload_source_maps": true
 }

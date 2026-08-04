@@ -29,7 +29,7 @@
     "APP_MIN_SDK": "24",
     "WIN_VERSION_CODE": "1",
     "WIN_VERSION_NAME": "1.0",
-    "WIN_DOWNLOAD_URL": "https://download.l.zztxer.dpdns.org/1.0-AI_Chat-Setup-x64",
+    "WIN_DOWNLOAD_URL": "https://download.l.zztxer.dpdns.org/1.0-AI_Chat-Setup-x64.exe",
     "WIN_CHANGELOG": "【新增】更新功能",
     "WIN_FORCE_UPDATE": "false"
   }

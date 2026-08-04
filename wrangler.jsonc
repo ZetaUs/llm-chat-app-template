@@ -1,31 +1,27 @@
-/**
- * For more details on how to configure Wrangler, refer to:
- * https://developers.cloudflare.com/workers/wrangler/configuration/
- */
 {
-	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "llm-chat-app-template",
-	"main": "src/index.ts",
-	"compatibility_date": "2025-10-08",
-	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
-	"assets": {
-		"binding": "ASSETS",
-		"directory": "./public"
-	},
-	"observability": {
-		"enabled": true
-	},
-	"ai": {
-		"binding": "AI"
-	},
-	"vars": {
-		"APP_VERSION_CODE": "1",
-		"APP_VERSION_NAME": "1.0",
-		"APP_DOWNLOAD_URL": "https://l.download.zztxer.dpdns.org/1.0-app-release.apk",
-		"APP_CHANGELOG": "1. 【新增】AI 流式对话，对接 Cloudflare Workers AI\n2. 【新增】侧边栏对话列表，支持新建/切换/删除\n3. 【新增】本地缓存对话记录，重启不丢失\n4. 【新增】停止生成、打字指示器\n5. 【新增】应用内自更新检测",
-		"APP_FORCE_UPDATE": "false"
-	},
-	"workers_dev": false,
-	"preview_urls": false,
-	"upload_source_maps": true
+  "name": "chat",
+  "main": "src/worker.js",
+  "compatibility_date": "2024-01-01",
+  "kv_namespaces": [
+    {
+      "binding": "CHAT_KV",
+      "id": "3f48e77d245f41bfa2fbc1852bf7c98b"
+    }
+  ],
+  "vars": {
+    "ROOM_ID": "default-room",
+    "MAX_MESSAGES": "500",
+    "API_KEY": "",
+    "APP_VERSION_CODE": "10",
+    "APP_VERSION_NAME": "1.2.8",
+    "APP_DOWNLOAD_URL": "https://chat-apk.zztxer.dpdns.org/1.2.8-app-debug.apk",
+    "APP_CHANGELOG": "1. 【新增】侧边栏菜单，包含设置、退出登录选项\n2. 【新增】用户头像上传和显示功能\n3. 【修复】聊天消息显示问题\n4. 【修复】跳过登录按钮跳转错误问题\n5. 【优化】禁止匿名登录，强制用户登录\n6. 【优化】删除创建群聊功能\n7. 【优化】固定5秒消息刷新间隔\n8. 【优化】删除语音消息功能",
+    "APP_FORCE_UPDATE": "false",
+    "APP_MIN_SDK": "24",
+    "WIN_VERSION_CODE": "22",
+    "WIN_VERSION_NAME": "1.2.1",
+    "WIN_DOWNLOAD_URL": "https://chat-windows.zztxer.dpdns.org/download",
+    "WIN_CHANGELOG": "1. 【修复】控制面板程序列表图标显示问题\n2. 【优化】卸载程序图标配置\n3. 【优化】整体稳定性",
+    "WIN_FORCE_UPDATE": "false"
+  }
 }

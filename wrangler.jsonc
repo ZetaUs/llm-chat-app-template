@@ -23,7 +23,7 @@
     "API_KEY": "",
     "APP_VERSION_CODE": "1",
     "APP_VERSION_NAME": "1.0",
-    "APP_DOWNLOAD_URL": "https://download.l.zztxer.dpdns.org/1.0-app-debug.apk",
+    "APP_DOWNLOAD_URL": "https://download.l.zztxer.dpdns.org/1.0-app-release.apk",
     "APP_CHANGELOG": "【新增】更新功能",
     "APP_FORCE_UPDATE": "false",
     "APP_MIN_SDK": "24",

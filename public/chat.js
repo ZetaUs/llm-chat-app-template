@@ -1,9 +1,8 @@
 /**
  * LLM Chat App Frontend
  *
- * 多会话管理 + 流式 SSE 响应 + localStorage 持久化。
+ * 多会话管理 + 流式 SSE 响应 + localStorage 持久化 + Markdown渲染AI输出
  */
-
 // ---------- DOM elements ----------
 const chatMessages = document.getElementById("chat-messages");
 const userInput = document.getElementById("user-input");
@@ -18,20 +17,16 @@ const conversationList = document.getElementById("conversation-list");
 const sidebar = document.getElementById("sidebar");
 const toggleSidebarBtn = document.getElementById("toggle-sidebar-btn");
 const menuBtn = document.getElementById("menu-btn");
-
 // ---------- 常量 ----------
 const STORAGE_KEY = "aichat_conversations";
 const CURRENT_KEY = "aichat_current_id";
 const WELCOME_MSG = "你好！我是 AI 聊天助手，请问有什么可以帮您？";
 const TITLE_MAX_LEN = 24;
-
 // ---------- State ----------
 let conversations = [];
 let currentId = null;
 let isProcessing = false;
-
 // ---------- 持久化 ----------
-
 function loadConversations() {
 	try {
 		const raw = localStorage.getItem(STORAGE_KEY);
@@ -43,7 +38,6 @@ function loadConversations() {
 		return [];
 	}
 }
-
 function saveConversations() {
 	try {
 		localStorage.setItem(STORAGE_KEY, JSON.stringify(conversations));
@@ -51,19 +45,15 @@ function saveConversations() {
 		console.error("保存会话失败:", e);
 	}
 }
-
 function saveCurrentId() {
 	try {
 		localStorage.setItem(CURRENT_KEY, currentId || "");
 	} catch (e) {}
 }
-
 // ---------- 会话管理 ----------
-
 function genId() {
 	return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 }
-
 function createConversation() {
 	const conv = {
 		id: genId(),
@@ -78,11 +68,9 @@ function createConversation() {
 	renderConversationList();
 	renderMessages();
 }
-
 function getCurrentConversation() {
 	return conversations.find((c) => c.id === currentId);
 }
-
 function switchConversation(id) {
 	if (isProcessing) return;
 	currentId = id;
@@ -90,13 +78,11 @@ function switchConversation(id) {
 	renderConversationList();
 	renderMessages();
 }
-
 function deleteConversation(id) {
 	if (isProcessing) return;
 	const idx = conversations.findIndex((c) => c.id === id);
 	if (idx === -1) return;
 	conversations.splice(idx, 1);
-
 	if (currentId === id) {
 		if (conversations.length > 0) {
 			currentId = conversations[0].id;
@@ -110,7 +96,6 @@ function deleteConversation(id) {
 	renderConversationList();
 	renderMessages();
 }
-
 function updateConversationTitle(conv) {
 	const firstUser = conv.messages.find((m) => m.role === "user");
 	if (firstUser) {
@@ -119,36 +104,30 @@ function updateConversationTitle(conv) {
 		conv.title = title;
 	}
 }
-
 // ---------- 渲染 ----------
-
 function renderConversationList() {
 	conversationList.innerHTML = "";
 	for (const conv of conversations) {
 		const item = document.createElement("div");
 		item.className = "conv-item" + (conv.id === currentId ? " active" : "");
 		item.dataset.id = conv.id;
-
 		const title = document.createElement("span");
 		title.className = "conv-title";
 		title.textContent = conv.title;
-
 		const delBtn = document.createElement("button");
 		delBtn.className = "conv-delete";
 		delBtn.title = "删除";
-		delBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>`;
+		delBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" /></svg>`;
 		delBtn.addEventListener("click", (e) => {
 			e.stopPropagation();
 			deleteConversation(conv.id);
 		});
-
 		item.appendChild(title);
 		item.appendChild(delBtn);
 		item.addEventListener("click", () => switchConversation(conv.id));
 		conversationList.appendChild(item);
 	}
 }
-
 function renderMessages() {
 	chatMessages.innerHTML = "";
 	const conv = getCurrentConversation();
@@ -161,31 +140,40 @@ function renderMessages() {
 		addMessageToChat(msg.role, msg.content);
 	}
 }
-
 // ---------- 工具函数 ----------
-
 function setStatus(state, text) {
 	statusDot.className = "status-dot" + (state ? " " + state : "");
 	if (text) statusText.textContent = text;
 }
-
+// 用户消息纯文本转义，防止XSS
 function escapeHtml(text) {
 	const div = document.createElement("div");
 	div.textContent = text;
 	return div.innerHTML;
 }
-
+/**
+ * 新增：渲染单条消息
+ * user：纯文本转义
+ * assistant：markdown转html（依赖页面全局 mdToHtml）
+ */
 function addMessageToChat(role, content) {
 	const wrapEl = document.createElement("div");
 	wrapEl.className = `msg-wrap ${role}`;
 	const messageEl = document.createElement("div");
 	messageEl.className = `message ${role}-message`;
-	messageEl.innerHTML = `<p>${escapeHtml(content)}</p>`;
+
+	if (role === "user") {
+		// 用户输入原样转义，不解析markdown
+		messageEl.innerHTML = `<p>${escapeHtml(content)}</p>`;
+	} else {
+		// AI回复解析Markdown：#标题、**加粗、```代码块无语言自动text
+		messageEl.innerHTML = window.mdToHtml(content);
+	}
+
 	wrapEl.appendChild(messageEl);
 	chatMessages.appendChild(wrapEl);
 	chatMessages.scrollTop = chatMessages.scrollHeight;
 }
-
 function consumeSseEvents(buffer) {
 	let normalized = buffer.replace(/\r/g, "");
 	const events = [];
@@ -205,15 +193,12 @@ function consumeSseEvents(buffer) {
 	}
 	return { events, buffer: normalized };
 }
-
 // ---------- 发送消息 ----------
-
 async function sendMessage() {
 	const message = userInput.value.trim();
 	if (message === "" || isProcessing) return;
 	const conv = getCurrentConversation();
 	if (!conv) return;
-
 	isProcessing = true;
 	userInput.disabled = true;
 	sendButton.disabled = true;
@@ -223,7 +208,6 @@ async function sendMessage() {
 	userInput.style.height = "auto";
 	typingIndicator.classList.add("visible");
 	conv.messages.push({ role: "user", content: message });
-
 	// 首条用户消息更新标题
 	if (conv.title === "新对话") {
 		updateConversationTitle(conv);
@@ -231,16 +215,13 @@ async function sendMessage() {
 		renderConversationList();
 	}
 	saveConversations();
-
 	try {
 		const wrapEl = document.createElement("div");
 		wrapEl.className = "msg-wrap assistant";
 		const assistantMessageEl = document.createElement("div");
 		assistantMessageEl.className = "message assistant-message";
-		assistantMessageEl.innerHTML = "<p></p>";
 		wrapEl.appendChild(assistantMessageEl);
 		chatMessages.appendChild(wrapEl);
-		const assistantTextEl = assistantMessageEl.querySelector("p");
 		chatMessages.scrollTop = chatMessages.scrollHeight;
 
 		const response = await fetch("/api/chat", {
@@ -250,17 +231,16 @@ async function sendMessage() {
 		});
 		if (!response.ok) throw new Error("Failed to get response");
 		if (!response.body) throw new Error("Response body is null");
-
 		const reader = response.body.getReader();
 		const decoder = new TextDecoder();
 		let responseText = "";
 		let buffer = "";
+		// 流式实时刷新Markdown渲染结果
 		const flushAssistantText = () => {
-			assistantTextEl.textContent = responseText;
+			assistantMessageEl.innerHTML = window.mdToHtml(responseText);
 			chatMessages.scrollTop = chatMessages.scrollHeight;
 		};
 		let sawDone = false;
-
 		while (true) {
 			const { done, value } = await reader.read();
 			if (done) {
@@ -302,13 +282,13 @@ async function sendMessage() {
 			}
 			if (sawDone) break;
 		}
-
 		if (responseText.length > 0) {
 			conv.messages.push({ role: "assistant", content: responseText });
 			saveConversations();
 			setStatus("", "就绪");
 		} else {
-			assistantTextEl.textContent = "（收到空响应）";
+			responseText = "（收到空响应）";
+			assistantMessageEl.innerHTML = window.mdToHtml(responseText);
 			setStatus("error", "空响应");
 		}
 	} catch (error) {
@@ -326,28 +306,22 @@ async function sendMessage() {
 		userInput.focus();
 	}
 }
-
 // ---------- 事件绑定 ----------
-
 userInput.addEventListener("input", function () {
 	this.style.height = "auto";
 	this.style.height = this.scrollHeight + "px";
 });
-
 userInput.addEventListener("keydown", function (e) {
 	if (e.key === "Enter" && !e.shiftKey) {
 		e.preventDefault();
 		sendMessage();
 	}
 });
-
 sendButton.addEventListener("click", sendMessage);
-
 newChatBtn.addEventListener("click", () => {
 	if (isProcessing) return;
 	createConversation();
 });
-
 clearButton.addEventListener("click", () => {
 	if (isProcessing) return;
 	const conv = getCurrentConversation();
@@ -359,17 +333,13 @@ clearButton.addEventListener("click", () => {
 	renderConversationList();
 	renderMessages();
 });
-
 toggleSidebarBtn.addEventListener("click", () => {
 	sidebar.classList.toggle("collapsed");
 });
-
 menuBtn.addEventListener("click", () => {
 	sidebar.classList.toggle("collapsed");
 });
-
 // ---------- 初始化 ----------
-
 conversations = loadConversations();
 const savedId = localStorage.getItem(CURRENT_KEY);
 if (savedId && conversations.find((c) => c.id === savedId)) {
@@ -377,7 +347,6 @@ if (savedId && conversations.find((c) => c.id === savedId)) {
 } else if (conversations.length > 0) {
 	currentId = conversations[0].id;
 }
-
 if (conversations.length === 0) {
 	createConversation();
 } else {

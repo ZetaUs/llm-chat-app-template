@@ -339,18 +339,7 @@ toggleSidebarBtn.addEventListener("click", () => {
 menuBtn.addEventListener("click", () => {
 	sidebar.classList.toggle("collapsed");
 });
-
-function hideDownloadButtonOnEntry() {
-	if (!downloadBtn) return;
-	const urlParams = new URLSearchParams(window.location.search);
-	const shouldHideDownload = urlParams.get("app") === "local" && urlParams.get("platform") === "windows";
-	if (shouldHideDownload) {
-		downloadBtn.style.display = "none";
-	}
-}
-
 // ---------- 初始化 ----------
-hideDownloadButtonOnEntry();
 conversations = loadConversations();
 const savedId = localStorage.getItem(CURRENT_KEY);
 if (savedId && conversations.find((c) => c.id === savedId)) {

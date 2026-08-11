@@ -17,6 +17,7 @@ const conversationList = document.getElementById("conversation-list");
 const sidebar = document.getElementById("sidebar");
 const toggleSidebarBtn = document.getElementById("toggle-sidebar-btn");
 const menuBtn = document.getElementById("menu-btn");
+const downloadButton = document.getElementById("download-btn");
 // ---------- 常量 ----------
 const STORAGE_KEY = "aichat_conversations";
 const CURRENT_KEY = "aichat_current_id";
@@ -340,6 +341,14 @@ menuBtn.addEventListener("click", () => {
 	sidebar.classList.toggle("collapsed");
 });
 // ---------- 初始化 ----------
+function hideDownloadWhenLocalWindows() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("app") === "local" && params.get("platform") === "windows") {
+        downloadButton?.classList.add("hidden");
+        downloadButton?.setAttribute("aria-hidden", "true");
+    }
+}
+
 conversations = loadConversations();
 const savedId = localStorage.getItem(CURRENT_KEY);
 if (savedId && conversations.find((c) => c.id === savedId)) {
@@ -353,3 +362,5 @@ if (conversations.length === 0) {
 	renderConversationList();
 	renderMessages();
 }
+
+hideDownloadWhenLocalWindows();

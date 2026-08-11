@@ -339,7 +339,19 @@ toggleSidebarBtn.addEventListener("click", () => {
 menuBtn.addEventListener("click", () => {
 	sidebar.classList.toggle("collapsed");
 });
+
+function hideDownloadButtonOnEntry() {
+	if (!downloadBtn) return;
+	const urlParams = new URLSearchParams(window.location.search);
+	const isBendiduan = urlParams.toString().includes("bendiduan") || window.location.search.includes("?=bendiduan");
+	const isLocalWindows = urlParams.get("app") === "local" && urlParams.get("platform") === "windows";
+	if (isBendiduan || isLocalWindows) {
+		downloadBtn.style.display = "none";
+	}
+}
+
 // ---------- 初始化 ----------
+hideDownloadButtonOnEntry();
 conversations = loadConversations();
 const savedId = localStorage.getItem(CURRENT_KEY);
 if (savedId && conversations.find((c) => c.id === savedId)) {

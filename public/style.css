@@ -463,3 +463,9 @@ html, body {
     .assistant-message h1 { font-size: 20px; }
     .assistant-message h2 { font-size: 17px; }
 }
+
+@media (max-width: 686px) {
+    .sidebar {
+        display: none;
+    }
+}

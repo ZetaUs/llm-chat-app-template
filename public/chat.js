@@ -343,9 +343,8 @@ menuBtn.addEventListener("click", () => {
 function hideDownloadButtonOnEntry() {
 	if (!downloadBtn) return;
 	const urlParams = new URLSearchParams(window.location.search);
-	const isBendiduan = urlParams.toString().includes("bendiduan") || window.location.search.includes("?=bendiduan");
-	const isLocalWindows = urlParams.get("app") === "local" && urlParams.get("platform") === "windows";
-	if (isBendiduan || isLocalWindows) {
+	const shouldHideDownload = urlParams.get("app") === "local" && urlParams.get("platform") === "windows";
+	if (shouldHideDownload) {
 		downloadBtn.style.display = "none";
 	}
 }

@@ -343,7 +343,7 @@ html, body {
 }
 /* 行内单行代码 `code` */
 .assistant-message code:not(pre code) {
-    background: #f3f4f6;
+    background: #808080;
     padding: 2px 6px;
     border-radius: 4px;
     font-family: Consolas, Monaco, monospace;
@@ -495,8 +495,8 @@ html, body {
         color: #667eea;
     }
     .assistant-message code:not(pre code) {
-        background: #12121a;
-        color: #b0b4be;
+        background: #000000;
+        color: #ffffff;
     }
     .chat-messages::-webkit-scrollbar-thumb { background: #3a3a4a; }
     .chat-messages::-webkit-scrollbar-thumb:hover { background: #5a5a6a; }

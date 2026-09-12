@@ -495,8 +495,8 @@ html, body {
         color: #667eea;
     }
     .assistant-message code:not(pre code) {
-        background: rgba(255, 255, 255, 0.08);
-        color: #d1d5db;
+        background: rgba(0, 0, 0, 0);
+        color: #b0b4be;
     }
     .chat-messages::-webkit-scrollbar-thumb { background: #3a3a4a; }
     .chat-messages::-webkit-scrollbar-thumb:hover { background: #5a5a6a; }

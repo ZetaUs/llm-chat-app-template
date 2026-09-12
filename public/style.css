@@ -495,7 +495,7 @@ html, body {
         color: #667eea;
     }
     .assistant-message code:not(pre code) {
-        background: rgba(0, 0, 0, 0);
+        background: #12121a;
         color: #b0b4be;
     }
     .chat-messages::-webkit-scrollbar-thumb { background: #3a3a4a; }

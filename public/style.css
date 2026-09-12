@@ -473,8 +473,8 @@ html, body {
         --bg-sidebar: #12121a;
         --bg-sidebar-hover: #1e1e2e;
         --bg-sidebar-active: #2a2a3e;
-        --bg-assistant-bubble: #1a1a24;
-        --text-primary: #e5e7eb;
+        --bg-assistant-bubble: #000000;
+        --text-primary: #666677;
         --text-secondary: #9ca3af;
         --text-sidebar: #a0a0b8;
         --text-sidebar-active: #ffffff;

@@ -133,6 +133,15 @@
             </div>
             <footer class="chat-input-area">
                 <div class="input-wrapper">
+                    <button id="upload-file-btn" class="upload-file-btn" title="上传代码文件">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                            <line x1="12" y1="18" x2="12" y2="12" />
+                            <line x1="9" y1="15" x2="15" y2="15" />
+                        </svg>
+                    </button>
+                    <input type="file" id="file-input" class="file-input" accept=".js,.ts,.jsx,.tsx,.py,.java,.c,.cpp,.h,.hpp,.cs,.go,.rs,.rb,.php,.swift,.kt,.scala,.r,.m,.mm,.sql,.sh,.bash,.zsh,.ps1,.bat,.cmd,.css,.scss,.sass,.less,.html,.htm,.xml,.json,.yaml,.yml,.toml,.ini,.cfg,.conf,.env,.md,.markdown,.txt,.log,.csv,.tsv,.vue,.svelte,.astro">
                     <textarea
                         id="user-input"
                         class="user-input"

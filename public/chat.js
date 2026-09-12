@@ -18,6 +18,8 @@ const sidebar = document.getElementById("sidebar");
 const toggleSidebarBtn = document.getElementById("toggle-sidebar-btn");
 const menuBtn = document.getElementById("menu-btn");
 const downloadButton = document.getElementById("download-btn");
+const uploadFileBtn = document.getElementById("upload-file-btn");
+const fileInput = document.getElementById("file-input");
 // ---------- 常量 ----------
 const STORAGE_KEY = "aichat_conversations";
 const CURRENT_KEY = "aichat_current_id";
@@ -339,6 +341,25 @@ toggleSidebarBtn.addEventListener("click", () => {
 });
 menuBtn.addEventListener("click", () => {
 	sidebar.classList.toggle("collapsed");
+});
+// ---------- 文件上传 ----------
+uploadFileBtn.addEventListener("click", () => {
+	fileInput.click();
+});
+fileInput.addEventListener("change", (e) => {
+	const file = e.target.files[0];
+	if (!file) return;
+	const reader = new FileReader();
+	reader.onload = (ev) => {
+		const content = ev.target.result;
+		const ext = file.name.split(".").pop().toLowerCase();
+		const prefix = ` **${file.name}**\n\n\`\`\`${ext}\n${content}\n\`\`\``;
+		userInput.value = prefix + "\n\n";
+		userInput.focus();
+		userInput.dispatchEvent(new Event("input"));
+	};
+	reader.readAsText(file);
+	fileInput.value = "";
 });
 // ---------- 初始化 ----------
 function hideDownloadWhenLocalWindows() {
